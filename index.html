@@ -22,11 +22,30 @@
 <meta name="twitter:description" content="Artisan multi-services : peinture, plâtrerie, rénovation, petits travaux. Devis gratuit sous 24h." id="twitterDescription">
 <meta name="twitter:image" content="" id="twitterImage">
 
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://api.emailjs.com https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com; frame-src https://www.google.com https://maps.google.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<noscript><style>[data-reveal]{opacity:1!important;transform:none!important}</style></noscript>
+<style>
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}[data-reveal]{opacity:1;transform:none}}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+.nav-links a.active{color:var(--green)!important;font-weight:700}
+.to-top{position:fixed;right:16px;bottom:20px;width:44px;height:44px;border-radius:50%;border:none;background:var(--green);color:#fff;font-size:1.2rem;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s;z-index:80}
+.to-top.show{opacity:1;pointer-events:auto}
+@media (max-width:900px){.to-top{bottom:84px}}
+.mobile-bar{display:none}
+@media (max-width:900px){
+  .mobile-bar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:90;background:#fff;box-shadow:0 -4px 20px rgba(0,0,0,.12);padding:8px 10px calc(8px + env(safe-area-inset-bottom,0px));gap:8px}
+  .mobile-bar a{flex:1;justify-content:center;padding:11px 8px;font-size:.82rem;white-space:nowrap}
+  body{padding-bottom:68px}
+}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #2ECC71;outline-offset:2px}
+</style>
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <!-- Firebase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4.4.1/dist/email.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
@@ -108,6 +127,10 @@ nav.scrolled .nav-links a{color:var(--muted);}
 .nav-links a:hover{color:var(--green);}
 nav.scrolled .nav-links a:hover{color:var(--green);}
 .nav-cta{display:inline-flex;}
+.nav-ctas{display:flex;align-items:center;gap:10px;}
+.hero-fb-btn{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:6px 14px;border-radius:99px;background:#1877F2;color:#fff;font-size:.8rem;font-weight:600;text-decoration:none;transition:all .2s;}
+.hero-fb-btn:hover{background:#145dbf;transform:translateY(-1px);}
+.hero-fb-btn b{font-family:Arial,sans-serif;font-size:1rem;line-height:1;}
 .hamburger{display:none;background:none;border:none;cursor:pointer;padding:6px;}
 .hamburger span{display:block;width:24px;height:2px;background:#fff;margin:5px 0;transition:all .3s;}
 nav.scrolled .hamburger span{background:var(--navy);}
@@ -176,6 +199,8 @@ nav.scrolled .hamburger span{background:var(--navy);}
 .avis-date{font-size:.8rem;color:var(--muted);}
 .avis-empty{text-align:center;padding:48px;color:var(--muted);font-size:1rem;}
 .avis-loading{text-align:center;padding:40px;color:var(--muted);}
+.avis-source{display:inline-flex;align-items:center;gap:4px;font-size:.7rem;font-weight:700;color:#4285F4;background:#EEF4FF;border:1px solid #D2E3FC;border-radius:20px;padding:2px 8px;margin-left:8px;white-space:nowrap;}
+.avis-source b{font-family:Arial,sans-serif;font-size:.8rem;background:linear-gradient(90deg,#4285F4 0 40%,#EA4335 40% 60%,#FBBC05 60% 80%,#34A853 80%);-webkit-background-clip:text;background-clip:text;color:transparent;}
 
 /* ── GALERIE ─────────────────────────────────────────── */
 .galerie-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:28px;}
@@ -268,7 +293,7 @@ footer{background:var(--navy);color:rgba(255,255,255,.6);padding:56px 0 28px;}
   .counter-grid{grid-template-columns:1fr 1fr;}
   .contact-cards{grid-template-columns:1fr;}
   .hero-stats{grid-template-columns:1fr 1fr 1fr;}
-  .nav-links,.nav-cta{display:none;}
+  .nav-links,.nav-cta,.nav-ctas{display:none;}
   .hamburger{display:block;}
   .hero-img-side{display:none;}
 }
@@ -279,6 +304,30 @@ footer{background:var(--navy);color:rgba(255,255,255,.6);padding:56px 0 28px;}
   .avis-header{flex-direction:column;}
   h1{font-size:2rem;}
 }
+
+/* ── BOUTONS : version améliorée (taille tactile, contraste, retours visuels) ── */
+.btn{min-height:48px;justify-content:center;line-height:1.2;letter-spacing:.01em;box-shadow:0 1px 2px rgba(0,0,0,.08);transition:transform .18s,box-shadow .18s,background .2s,color .2s,border-color .2s;-webkit-tap-highlight-color:transparent;font-family:inherit;}
+.btn:active{transform:translateY(1px) scale(.98)!important;box-shadow:none!important;}
+.btn-primary{background:linear-gradient(135deg,#27AE60,#1E8E4E);color:#fff;box-shadow:0 4px 14px rgba(39,174,96,.35);}
+.btn-primary:hover{background:linear-gradient(135deg,#1E8E4E,#17743F);color:#fff;transform:translateY(-2px);box-shadow:0 8px 22px rgba(30,142,78,.42);}
+.btn-white{border:1px solid rgba(0,0,0,.08);box-shadow:0 2px 8px rgba(0,0,0,.1);}
+.btn-white:hover{background:#EAFBF1;color:#17743F;transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.15);}
+.btn-outline:hover{transform:translateY(-2px);}
+.nav-ctas .btn{min-height:42px;padding:9px 20px;font-size:.88rem;}
+.btn:disabled,.btn.is-loading{cursor:not-allowed;opacity:.85;}
+.btn.is-loading{position:relative;color:transparent!important;pointer-events:none;}
+.btn.is-loading::after{content:'';position:absolute;width:20px;height:20px;border:3px solid #fff;border-top-color:transparent;border-radius:50%;animation:btnspin .7s linear infinite;}
+.btn-white.is-loading::after{border-color:var(--navy);border-top-color:transparent;}
+@keyframes btnspin{to{transform:rotate(360deg)}}
+.filter-btn{min-height:40px;padding:8px 18px;}
+.filter-btn:hover{border-color:var(--green);color:var(--navy);transform:translateY(-1px);}
+.filter-btn.active:hover{color:#fff;}
+.rdv-mode-btn{min-height:48px;}
+.rdv-mode-btn:hover:not(.active){border-color:var(--green);}
+.rdv-mode-btn.active{background:linear-gradient(135deg,#27AE60,#1E8E4E);border-color:#1E8E4E;box-shadow:0 4px 12px rgba(39,174,96,.3);}
+.service-link{padding:6px 0;}
+.service-link:hover{gap:10px;color:var(--green-dark);}
+.social-btn{width:42px;height:42px;}
 </style>
 </head>
 <body>
@@ -299,14 +348,17 @@ footer{background:var(--navy);color:rgba(255,255,255,.6);padding:56px 0 28px;}
     </a>
     <ul class="nav-links">
       <li><a href="#services">Services</a></li>
-      <li><a href="#galerie">Galerie</a></li>
       <li><a href="#avis">Avis</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a href="#galerie">Galerie</a></li>
       <li><a href="#zone">Zone</a></li>
       <li><a href="#rdv">Rendez-vous</a></li>
-      <li><a href="#contact">Contact</a></li>
     </ul>
-    <a href="#devis" class="btn btn-primary nav-cta">Devis gratuit</a>
-    <button class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <div class="nav-ctas">
+      <a href="#rdv" class="btn btn-primary nav-cta" onclick="choisirModeRdv('rappel')">☎️ Être rappelé</a>
+      <a href="#devis" class="btn btn-primary nav-cta">Devis gratuit</a>
+    </div>
+    <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Ouvrir le menu" type="button">
       <span></span><span></span><span></span>
     </button>
   </div>
@@ -315,12 +367,22 @@ footer{background:var(--navy);color:rgba(255,255,255,.6);padding:56px 0 28px;}
 <!-- MENU MOBILE -->
 <div class="mobile-menu" id="mobileMenu">
   <a href="#services" onclick="toggleMenu()">Services</a>
-  <a href="#galerie" onclick="toggleMenu()">Galerie</a>
   <a href="#avis" onclick="toggleMenu()">Avis</a>
+  <a href="#contact" onclick="toggleMenu()">Contact</a>
+  <a href="#galerie" onclick="toggleMenu()">Galerie</a>
   <a href="#zone" onclick="toggleMenu()">Zone</a>
   <a href="#rdv" onclick="toggleMenu()">Rendez-vous</a>
-  <a href="#contact" onclick="toggleMenu()">Contact</a>
   <a href="#devis" class="btn btn-primary" onclick="toggleMenu()">Devis gratuit</a>
+  <a href="#rdv" class="btn btn-primary" onclick="toggleMenu();choisirModeRdv('rappel')">☎️ Être rappelé</a>
+</div>
+
+<button type="button" class="to-top" id="toTopBtn" aria-label="Retour en haut de page" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<!-- BARRE D'ACTIONS MOBILE -->
+<div class="mobile-bar" aria-label="Actions rapides">
+  <a href="tel:+33600000000" class="btn btn-white" id="mobileCallBtn" style="border:1px solid #e5e7eb">📞 Appeler</a>
+  <a href="#devis" class="btn btn-primary">📋 Devis</a>
+  <a href="#rdv" class="btn btn-primary" onclick="choisirModeRdv('rappel')">☎️ Rappel</a>
 </div>
 
 <!-- HERO -->
@@ -337,20 +399,22 @@ footer{background:var(--navy);color:rgba(255,255,255,.6);padding:56px 0 28px;}
         <p class="hero-desc fade-up-3" id="heroDescEl">Peinture, plâtrerie, rénovation, petits travaux. Devis gratuit sous 24h — intervention rapide dans tout le département.</p>
         <div class="hero-actions fade-up-3">
           <a href="#devis" class="btn btn-primary">📋 Demander un devis</a>
+          <a href="#rdv" class="btn btn-primary" onclick="choisirModeRdv('rappel')">☎️ Être rappelé</a>
           <a href="tel:+33600000000" class="btn btn-white" id="heroCallBtn">📞 Appeler directement</a>
         </div>
         <div class="hero-stats">
-          <div>
+          <div id="heroStatClientsBox">
             <div class="hero-stat-val" id="statClientsEl" data-count="350">0</div>
             <div class="hero-stat-lbl">Clients satisfaits</div>
           </div>
-          <div>
+          <div id="heroStatAnneesBox">
             <div class="hero-stat-val" id="statAnneesEl" data-count="12">0</div>
             <div class="hero-stat-lbl">Années d'expérience</div>
           </div>
           <div>
             <div class="hero-stat-val" id="heroAvisCount" data-count="0">—</div>
             <div class="hero-stat-lbl">Avis clients</div>
+            <a id="heroFacebookBtn" class="hero-fb-btn" href="#" target="_blank" rel="noopener" style="display:none"><b>f</b> Facebook</a>
           </div>
         </div>
       </div>
@@ -421,61 +485,14 @@ footer{background:var(--navy);color:rgba(255,255,255,.6);padding:56px 0 28px;}
   </div>
 </section>
 
-<!-- COMPTEURS ANIMÉS -->
-<section class="counter-section">
-  <div class="container">
-    <div class="counter-grid">
-      <div class="text-center" data-reveal>
-        <div class="counter-val"><span data-count="350">0</span>+</div>
-        <div class="counter-lbl">Clients satisfaits</div>
-      </div>
-      <div class="text-center" data-reveal>
-        <div class="counter-val"><span data-count="1200">0</span>+</div>
-        <div class="counter-lbl">Interventions réalisées</div>
-      </div>
-      <div class="text-center" data-reveal>
-        <div class="counter-val"><span id="counterAvis" data-count="0">—</span></div>
-        <div class="counter-lbl">Avis vérifiés</div>
-      </div>
-      <div class="text-center" data-reveal>
-        <div class="counter-val"><span data-count="12">0</span></div>
-        <div class="counter-lbl">Années d'expérience</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- GALERIE -->
-<section id="galerie" class="section">
-  <div class="container">
-    <div class="section-label" id="galerieLabelEl">Nos réalisations</div>
-    <div class="galerie-header">
-      <h2 data-reveal id="galerieTitreEl">Galerie photo</h2>
-      <div class="galerie-cats" id="galerieCats">
-        <button class="filter-btn active" onclick="filterGalerie('all',this)">Tout voir</button>
-      </div>
-    </div>
-    <div class="galerie-grid" id="galerieGrid">
-      <div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--muted)">
-        Chargement des photos...
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- LIGHTBOX -->
-<div class="lightbox" id="lightbox" onclick="closeLightbox()">
-  <button class="lightbox-close">✕</button>
-  <img id="lightboxImg" src="" alt="">
-</div>
-
 <!-- AVIS -->
-<section id="avis" class="section bg-off">
+<section id="avis" class="section">
   <div class="container">
     <div class="section-label" id="avisLabelEl">Ce qu'ils disent</div>
     <div class="avis-header">
       <div>
         <h2 data-reveal id="avisTitreEl">Avis de mes clients</h2>
+        <a id="googleAvisBtn" class="btn btn-white" href="#" target="_blank" rel="noopener" style="display:none;margin-top:14px;border:1px solid #e5e7eb">⭐ Laisser un avis sur Google</a>
         <p data-reveal style="margin-top:8px" id="avisSousTitreEl">Avis vérifiés — publiés directement par les clients après intervention.</p>
       </div>
       <div class="avis-moyenne" data-reveal>
@@ -496,91 +513,29 @@ footer{background:var(--navy);color:rgba(255,255,255,.6);padding:56px 0 28px;}
   </div>
 </section>
 
-<!-- DEMANDE DE DEVIS -->
-<section id="devis" class="section">
+<!-- COMMENT ÇA MARCHE -->
+<section id="etapes" class="section bg-off">
   <div class="container">
-    <div class="grid-2">
-      <div>
-        <div class="section-label" id="devisLabelEl">Gratuit & sans engagement</div>
-        <h2 data-reveal id="devisTitreEl">Demandez votre devis</h2>
-        <p style="margin:16px 0 28px" data-reveal id="devisSousTitreEl">Je vous rappelle sous 24h pour discuter de votre projet et vous envoyer un devis détaillé, sans aucun engagement.</p>
-        <div style="display:flex;flex-direction:column;gap:16px">
-          <div class="flex"><span style="font-size:1.5rem">⚡</span><span id="devisPoint1">Réponse sous 24h</span></div>
-          <div class="flex"><span style="font-size:1.5rem">📋</span><span id="devisPoint2">Devis détaillé et transparent</span></div>
-          <div class="flex"><span style="font-size:1.5rem">💯</span><span id="devisPoint3">Travail garanti et assuré</span></div>
-          <div class="flex"><span style="font-size:1.5rem">🤝</span><span id="devisPoint4">Sans engagement de votre part</span></div>
-        </div>
+    <div class="section-label">Simple et rapide</div>
+    <h2 class="section-title" data-reveal>Comment ça marche ?</h2>
+    <div class="grid-3" style="margin-top:40px">
+      <div class="service-card" data-reveal style="text-align:center">
+        <div class="service-icon" style="margin:0 auto 14px">1</div>
+        <h3>Vous me contactez</h3>
+        <p>Demandez un devis gratuit en ligne, appelez-moi ou demandez à être rappelé. Réponse sous 24h.</p>
       </div>
-      <div class="devis-form" data-reveal>
-        <div class="form-success" id="devisSuccess">
-          ✅ Votre demande a bien été envoyée ! Je vous contacte dans les 24h.
-        </div>
-        <div class="form-grid">
-          <div class="fg"><label>Prénom *</label><input id="dPrenom" placeholder="Jean"></div>
-          <div class="fg"><label>Nom *</label><input id="dNom" placeholder="Dupont"></div>
-          <div class="fg"><label>Téléphone *</label><input id="dTel" type="tel" placeholder="06 00 00 00 00"></div>
-          <div class="fg"><label>Email</label><input id="dEmail" type="email" placeholder="jean@exemple.fr"></div>
-          <div class="fg full"><label>Adresse du chantier</label><input id="dAdresse" placeholder="12 rue des Lilas, 59000 Lille"></div>
-          <div class="fg full"><label>Description des travaux *</label><textarea id="dDesc" placeholder="Décrivez vos travaux : surface, état actuel, vos souhaits..."></textarea></div>
-          <div class="fg full"><label>Code promo (optionnel)</label><input id="dCodePromo" placeholder="Ex : ETE2026" style="text-transform:uppercase" oninput="this.value=this.value.toUpperCase();verifierCodePromoSaisi()"><div id="dCodePromoStatus" style="font-size:12.5px;margin-top:6px"></div></div>
-        </div>
-        <button class="btn btn-primary" style="width:100%;justify-content:center;padding:14px" onclick="sendDevis()">
-          📋 Envoyer ma demande de devis
-        </button>
+      <div class="service-card" data-reveal style="text-align:center">
+        <div class="service-icon" style="margin:0 auto 14px">2</div>
+        <h3>Je vous fais un devis</h3>
+        <p>Je vous rappelle, j'étudie votre projet et je vous remets un devis clair, sans surprise et sans engagement.</p>
+      </div>
+      <div class="service-card" data-reveal style="text-align:center">
+        <div class="service-icon" style="margin:0 auto 14px">3</div>
+        <h3>Je réalise les travaux</h3>
+        <p>Si le devis vous convient, nous fixons une date et j'interviens avec soin, dans les délais annoncés.</p>
       </div>
     </div>
-  </div>
-</section>
-
-<!-- ZONE INTERVENTION -->
-<section id="zone" class="section bg-off">
-  <div class="container">
-    <div class="section-label" id="zoneLabelEl">Où j'interviens</div>
-    <h2 data-reveal id="zoneTitreEl">Zone d'intervention</h2>
-    <p style="margin-top:12px" data-reveal id="zoneTexteEl">J'interviens dans un rayon de 50 km autour de ma base. N'hésitez pas à me contacter pour vérifier si votre commune est couverte.</p>
-    <div class="zone-tags" id="zoneTagsEl" data-reveal>
-      <div class="zone-tag">Lille</div><div class="zone-tag">Roubaix</div>
-      <div class="zone-tag">Tourcoing</div><div class="zone-tag">Villeneuve d'Ascq</div>
-      <div class="zone-tag">Valenciennes</div><div class="zone-tag">Douai</div>
-      <div class="zone-tag">Lens</div><div class="zone-tag">Arras</div>
-      <div class="zone-tag">Béthune</div><div class="zone-tag">Cambrai</div>
-      <div class="zone-tag">Dunkerque</div><div class="zone-tag">Boulogne-sur-Mer</div>
-    </div>
-  </div>
-</section>
-
-<!-- PRISE DE RDV / RAPPEL -->
-<section id="rdv" class="section">
-  <div class="container">
-    <div class="grid-2">
-      <div>
-        <div class="section-label">Sur rendez-vous</div>
-        <h2 data-reveal>Prenez rendez-vous</h2>
-        <p style="margin:16px 0 28px" data-reveal>Choisissez une date et une heure qui vous conviennent, ou demandez à être rappelé. Je vous confirme votre créneau par email dès que possible.</p>
-        <div style="display:flex;flex-direction:column;gap:16px">
-          <div class="flex"><span style="font-size:1.5rem">📅</span><span>Choisissez votre créneau</span></div>
-          <div class="flex"><span style="font-size:1.5rem">✅</span><span>Confirmation rapide par email</span></div>
-          <div class="flex"><span style="font-size:1.5rem">☎️</span><span>Ou soyez rappelé si vous préférez</span></div>
-        </div>
-      </div>
-      <div class="devis-form" data-reveal>
-        <div style="display:flex;gap:10px;margin-bottom:20px">
-          <button type="button" id="rdvModeBtn" class="rdv-mode-btn active" onclick="choisirModeRdv('rdv')">📅 Rendez-vous précis</button>
-          <button type="button" id="rappelModeBtn" class="rdv-mode-btn" onclick="choisirModeRdv('rappel')">☎️ Être rappelé</button>
-        </div>
-        <div class="fg"><label>Prénom *</label><input id="rPrenom"></div>
-        <div class="fg"><label>Nom *</label><input id="rNom"></div>
-        <div class="fg"><label>Téléphone *</label><input id="rTel" type="tel"></div>
-        <div class="fg"><label>Email</label><input id="rEmail" type="email"></div>
-        <div id="rdvDateWrap">
-          <div class="fg"><label>Date souhaitée *</label><input id="rDate" type="date"></div>
-          <div class="fg"><label>Heure souhaitée *</label><input id="rHeure" type="time"></div>
-        </div>
-        <div class="fg full"><label>Message (optionnel)</label><textarea id="rMessage" placeholder="Précisez l'objet de votre demande..."></textarea></div>
-        <button class="btn btn-primary" style="width:100%;justify-content:center;padding:14px" onclick="sendRdv()" id="rdvSubmitBtn">📅 Demander ce rendez-vous</button>
-        <div id="rdvSuccess" class="form-success">✅ Votre demande a bien été envoyée ! Vous recevrez une confirmation par email dès validation.</div>
-      </div>
-    </div>
+    <div style="text-align:center;margin-top:32px"><a href="#devis" class="btn btn-primary">📋 Demander mon devis gratuit</a></div>
   </div>
 </section>
 
@@ -627,6 +582,142 @@ footer{background:var(--navy);color:rgba(255,255,255,.6);padding:56px 0 28px;}
       </div>
       <button class="btn btn-primary" onclick="sendContact()" style="margin-top:4px">📩 Envoyer</button>
       <div class="form-success" id="contactSuccess" style="margin-top:14px">✅ Message envoyé ! Je vous réponds rapidement.</div>
+    </div>
+  </div>
+</section>
+
+<!-- GALERIE -->
+<section id="galerie" class="section bg-off">
+  <div class="container">
+    <div class="section-label" id="galerieLabelEl">Nos réalisations</div>
+    <div class="galerie-header">
+      <h2 data-reveal id="galerieTitreEl">Galerie photo</h2>
+      <div class="galerie-cats" id="galerieCats">
+        <button class="filter-btn active" onclick="filterGalerie('all',this)">Tout voir</button>
+      </div>
+    </div>
+    <div class="galerie-grid" id="galerieGrid">
+      <div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--muted)">
+        Chargement des photos...
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close">✕</button>
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<!-- COMPTEURS ANIMÉS -->
+<section class="counter-section" id="counterSection">
+  <div class="container">
+    <div class="counter-grid">
+      <div class="text-center" data-reveal id="counterBoxClients">
+        <div class="counter-val"><span id="counterClientsEl" data-count="350">0</span>+</div>
+        <div class="counter-lbl">Clients satisfaits</div>
+      </div>
+      <div class="text-center" data-reveal id="counterBoxInterventions">
+        <div class="counter-val"><span id="counterInterventionsEl" data-count="1200">0</span>+</div>
+        <div class="counter-lbl">Interventions réalisées</div>
+      </div>
+      <div class="text-center" data-reveal>
+        <div class="counter-val"><span id="counterAvis" data-count="0">—</span></div>
+        <div class="counter-lbl">Avis vérifiés</div>
+      </div>
+      <div class="text-center" data-reveal id="counterBoxAnnees">
+        <div class="counter-val"><span id="counterAnneesEl" data-count="12">0</span></div>
+        <div class="counter-lbl">Années d'expérience</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ZONE INTERVENTION -->
+<section id="zone" class="section">
+  <div class="container">
+    <div class="section-label" id="zoneLabelEl">Où j'interviens</div>
+    <h2 data-reveal id="zoneTitreEl">Zone d'intervention</h2>
+    <p style="margin-top:12px" data-reveal id="zoneTexteEl">J'interviens dans un rayon de 50 km autour de ma base. N'hésitez pas à me contacter pour vérifier si votre commune est couverte.</p>
+    <div class="zone-tags" id="zoneTagsEl" data-reveal>
+      <div class="zone-tag">Lille</div><div class="zone-tag">Roubaix</div>
+      <div class="zone-tag">Tourcoing</div><div class="zone-tag">Villeneuve d'Ascq</div>
+      <div class="zone-tag">Valenciennes</div><div class="zone-tag">Douai</div>
+      <div class="zone-tag">Lens</div><div class="zone-tag">Arras</div>
+      <div class="zone-tag">Béthune</div><div class="zone-tag">Cambrai</div>
+      <div class="zone-tag">Dunkerque</div><div class="zone-tag">Boulogne-sur-Mer</div>
+    </div>
+  </div>
+</section>
+
+<!-- DEMANDE DE DEVIS -->
+<section id="devis" class="section bg-off">
+  <div class="container">
+    <div class="grid-2">
+      <div>
+        <div class="section-label" id="devisLabelEl">Gratuit & sans engagement</div>
+        <h2 data-reveal id="devisTitreEl">Demandez votre devis</h2>
+        <p style="margin:16px 0 28px" data-reveal id="devisSousTitreEl">Je vous rappelle sous 24h pour discuter de votre projet et vous envoyer un devis détaillé, sans aucun engagement.</p>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="flex"><span style="font-size:1.5rem">⚡</span><span id="devisPoint1">Réponse sous 24h</span></div>
+          <div class="flex"><span style="font-size:1.5rem">📋</span><span id="devisPoint2">Devis détaillé et transparent</span></div>
+          <div class="flex"><span style="font-size:1.5rem">💯</span><span id="devisPoint3">Travail garanti et assuré</span></div>
+          <div class="flex"><span style="font-size:1.5rem">🤝</span><span id="devisPoint4">Sans engagement de votre part</span></div>
+        </div>
+      </div>
+      <div class="devis-form" data-reveal>
+        <div class="form-success" id="devisSuccess">
+          ✅ Votre demande a bien été envoyée ! Je vous contacte dans les 24h.
+        </div>
+        <div class="form-grid">
+          <div class="fg"><label>Prénom *</label><input id="dPrenom" placeholder="Jean"></div>
+          <div class="fg"><label>Nom *</label><input id="dNom" placeholder="Dupont"></div>
+          <div class="fg"><label>Téléphone *</label><input id="dTel" type="tel" placeholder="06 00 00 00 00"></div>
+          <div class="fg"><label>Email</label><input id="dEmail" type="email" placeholder="jean@exemple.fr"></div>
+          <div class="fg full"><label>Adresse du chantier</label><input id="dAdresse" placeholder="12 rue des Lilas, 59000 Lille"></div>
+          <div class="fg full"><label>Description des travaux *</label><textarea id="dDesc" placeholder="Décrivez vos travaux : surface, état actuel, vos souhaits..."></textarea></div>
+          <div class="fg full"><label>Code promo (optionnel)</label><input id="dCodePromo" placeholder="Ex : ETE2026" style="text-transform:uppercase" oninput="this.value=this.value.toUpperCase();verifierCodePromoSaisi()"><div id="dCodePromoStatus" style="font-size:12.5px;margin-top:6px"></div></div>
+        </div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center;padding:14px" onclick="sendDevis()">
+          📋 Envoyer ma demande de devis
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRISE DE RDV / RAPPEL -->
+<section id="rdv" class="section">
+  <div class="container">
+    <div class="grid-2">
+      <div>
+        <div class="section-label">Sur rendez-vous</div>
+        <h2 data-reveal>Prenez rendez-vous</h2>
+        <p style="margin:16px 0 28px" data-reveal>Choisissez une date et une heure qui vous conviennent, ou demandez à être rappelé. Je vous confirme votre créneau par email dès que possible.</p>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="flex"><span style="font-size:1.5rem">📅</span><span>Choisissez votre créneau</span></div>
+          <div class="flex"><span style="font-size:1.5rem">✅</span><span>Confirmation rapide par email</span></div>
+          <div class="flex"><span style="font-size:1.5rem">☎️</span><span>Ou soyez rappelé si vous préférez</span></div>
+        </div>
+      </div>
+      <div class="devis-form" data-reveal>
+        <div style="display:flex;gap:10px;margin-bottom:20px">
+          <button type="button" id="rdvModeBtn" class="rdv-mode-btn active" onclick="choisirModeRdv('rdv')">📅 Rendez-vous précis</button>
+          <button type="button" id="rappelModeBtn" class="rdv-mode-btn" onclick="choisirModeRdv('rappel')">☎️ Être rappelé</button>
+        </div>
+        <div class="fg"><label>Prénom *</label><input id="rPrenom"></div>
+        <div class="fg"><label>Nom *</label><input id="rNom"></div>
+        <div class="fg"><label>Téléphone *</label><input id="rTel" type="tel"></div>
+        <div class="fg"><label>Email</label><input id="rEmail" type="email"></div>
+        <div id="rdvDateWrap">
+          <div class="fg"><label>Date souhaitée *</label><input id="rDate" type="date"></div>
+          <div class="fg"><label>Heure souhaitée *</label><input id="rHeure" type="time"></div>
+        </div>
+        <div class="fg full"><label>Message (optionnel)</label><textarea id="rMessage" placeholder="Précisez l'objet de votre demande..."></textarea></div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center;padding:14px" onclick="sendRdv()" id="rdvSubmitBtn">📅 Demander ce rendez-vous</button>
+        <div id="rdvSuccess" class="form-success">✅ Votre demande a bien été envoyée ! Vous recevrez une confirmation par email dès validation.</div>
+      </div>
     </div>
   </div>
 </section>
@@ -708,6 +799,11 @@ footer{background:var(--navy);color:rgba(255,255,255,.6);padding:56px 0 28px;}
 //       allow read: if true;
 //       allow create: if true;
 //       allow update, delete: if false;
+//     }
+//     // Avis Google (saisis depuis l'appli de gestion) : lecture publique, écriture admin uniquement
+//     match /avisGoogle/{doc} {
+//       allow read: if true;
+//       allow write: if request.auth != null;
 //     }
 //     // Galerie : lecture publique, écriture admin uniquement (photos gérées depuis l'appli)
 //     match /galerie/{doc} {
@@ -973,6 +1069,43 @@ function envoyerMessageMaintenanceVisiteur(){
   }).catch(function(e){console.error('Erreur envoi message maintenance:',e);});
 }
 
+// ── Sécurité : échappement et validation des URLs/valeurs venant de la base ──
+function escH(v){return (v===null||v===undefined?'':String(v)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+function urlHttps(u){u=(u||'').trim();return /^https:\/\//i.test(u)?u:'';}
+function urlImage(u){u=(u||'').trim();return /^(https:\/\/|data:image\/(png|jpe?g|webp|gif|svg\+xml);base64,)/i.test(u)?u:'';}
+function urlCarte(u){u=(u||'').trim();return /^https:\/\/(www\.)?google\.[a-z.]+\/maps\/embed/i.test(u)?u:'';}
+
+// ── EmailJS : réutilise la config saisie dans l'appli (Paramètres > Envoi automatique d'emails),
+// publiée dans siteConfig/main.emailjsConfig. Même template que l'appli (champs to_email, subject, message...).
+var emailjsCfg={};
+function envoyerEmailsJS(d){
+  try{
+    var c=emailjsCfg;
+    if(!c.actif||!c.publicKey||!c.serviceId||!c.templateId||typeof emailjs==='undefined')return;
+    var o={publicKey:c.publicKey};
+    var nomComplet=((d.prenom||'')+' '+(d.nom||'')).trim();
+    var entreprise=c.nomEntreprise||'';
+    // 1) Accusé de réception au client (si email renseigné)
+    if(d.email){
+      emailjs.send(c.serviceId,c.templateId,{
+        to_email:d.email,to_name:d.prenom||d.nom||'',cc_email:'',from_name:entreprise,attachment:'',
+        subject:'Nous avons bien reçu votre demande'+(entreprise?' — '+entreprise:''),
+        message:'Bonjour '+(d.prenom||d.nom||'')+',\n\nJ\'ai bien reçu votre demande ('+(d.objet||'')+'). Je reviens vers vous très vite, généralement sous 24h.'+
+          (c.telEntreprise?'\nPour une urgence : '+c.telEntreprise:'')+'\n\nCordialement,\n'+entreprise
+      },o).catch(function(e){console.error('EmailJS client:',e);});
+    }
+    // 2) Notification à l'entreprise
+    if(c.emailEntreprise){
+      emailjs.send(c.serviceId,c.templateId,{
+        to_email:c.emailEntreprise,to_name:entreprise,cc_email:'',from_name:'Site vitrine',attachment:'',
+        subject:'Nouvelle demande : '+(d.objet||'')+(nomComplet?' — '+nomComplet:''),
+        message:(d.objet||'')+'\n\nNom : '+nomComplet+'\nTéléphone : '+(d.tel||'—')+'\nEmail : '+(d.email||'—')+
+          (d.adresse?'\nAdresse : '+d.adresse:'')+(d.dateSouhaitee?'\nDate souhaitée : '+d.dateSouhaitee:'')+'\n\nMessage :\n'+(d.message||'—')
+      },o).catch(function(e){console.error('EmailJS notification:',e);});
+    }
+  }catch(e){console.error('EmailJS:',e);}
+}
+
 function applySiteConfig(cfg){
   cfg=cfg||{};
 
@@ -986,7 +1119,7 @@ function applySiteConfig(cfg){
     document.body.innerHTML='<div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 20px;font-family:Arial,Helvetica,sans-serif;background:#F8FAFC">'+
       '<div style="font-size:52px;margin-bottom:16px">🛠️</div>'+
       '<h1 style="font-size:22px;color:#1F2937;margin-bottom:10px">Site en maintenance</h1>'+
-      '<p style="font-size:14px;color:#6B7280;max-width:420px;margin-bottom:24px">'+(cfg.messageMaintenance||'Nous effectuons actuellement une mise à jour. Merci de revenir un peu plus tard.')+'</p>'+
+      '<p style="font-size:14px;color:#6B7280;max-width:420px;margin-bottom:24px">'+escH(cfg.messageMaintenance||'Nous effectuons actuellement une mise à jour. Merci de revenir un peu plus tard.')+'</p>'+
       '<div id="maint-chat-box" style="width:100%;max-width:420px;background:#fff;border:1px solid #E5E7EB;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.06);overflow:hidden;text-align:left">'+
         '<div style="background:#1F2937;color:#fff;padding:10px 14px;font-size:13px;font-weight:600">💬 Une question ? Écrivez-nous</div>'+
         '<div id="maint-chat-fil" style="max-height:220px;overflow-y:auto;padding:12px;font-size:13px"></div>'+
@@ -1047,12 +1180,15 @@ function applySiteConfig(cfg){
     if(sg){
       sg.innerHTML=cfg.services.map(function(s){
         return '<div class="service-card" data-reveal>'+
-          '<div class="service-icon">'+(s.icone||'🔧')+'</div>'+
-          '<h3>'+(s.titre||'').replace(/</g,'&lt;')+'</h3>'+
-          '<p>'+(s.description||'').replace(/</g,'&lt;')+'</p>'+
+          '<div class="service-icon">'+escH(s.icone||'🔧')+'</div>'+
+          '<h3>'+escH(s.titre)+'</h3>'+
+          '<p>'+escH(s.description)+'</p>'+
           '<a href="#devis" class="service-link">Demander un devis →</a>'+
         '</div>';
       }).join('');
+      // Les cartes sont créées après l'initialisation de l'animation d'apparition :
+      // sans ceci elles restent à opacity:0 (invisibles). On les enregistre auprès de l'observer.
+      sg.querySelectorAll('[data-reveal]').forEach(function(el){revealObserver.observe(el);});
     }
   }
   if(document.title&&cfg.nom)document.title=cfg.nom+' – Artisan Multi-Services';
@@ -1093,37 +1229,56 @@ function applySiteConfig(cfg){
   }
 
   // Logo (URL renseignée depuis l'application)
-  if(cfg.logoUrl){
+  if(urlImage(cfg.logoUrl)){
     var navImg=document.getElementById('navLogoImg');
-    if(navImg){navImg.src=cfg.logoUrl;navImg.style.display='block';}
+    if(navImg){navImg.src=urlImage(cfg.logoUrl);navImg.style.display='block';}
     var favicon=document.querySelector('link[rel="icon"]')||document.createElement('link');
-    favicon.rel='icon';favicon.href=cfg.logoUrl;
+    favicon.rel='icon';favicon.href=urlImage(cfg.logoUrl);
     if(!favicon.parentNode)document.head.appendChild(favicon);
   }
 
   // Photo de couverture (à droite du titre principal)
-  if(cfg.heroImageUrl){
+  if(urlImage(cfg.heroImageUrl)){
     var heroImg=document.getElementById('heroImgEl');
     var heroPh=document.getElementById('heroImgPlaceholder');
     if(heroImg&&heroPh){
       heroImg.onerror=function(){heroImg.style.display='none';heroPh.style.display='';};
       heroImg.onload=function(){heroImg.style.display='block';heroPh.style.display='none';};
-      heroImg.src=cfg.heroImageUrl;
+      heroImg.src=urlImage(cfg.heroImageUrl);
     }
   }
 
+  // Chiffres clés : valeur (hero + bandeau de compteurs) et affichage activable/désactivable
   if(cfg.statClients!==undefined&&cfg.statClients!==null&&cfg.statClients!==''){
-    var elC=document.getElementById('statClientsEl');if(elC)elC.setAttribute('data-count',cfg.statClients);
+    ['statClientsEl','counterClientsEl'].forEach(function(id){var e=document.getElementById(id);if(e)e.setAttribute('data-count',cfg.statClients);});
   }
   if(cfg.statAnnees!==undefined&&cfg.statAnnees!==null&&cfg.statAnnees!==''){
-    var elA=document.getElementById('statAnneesEl');if(elA)elA.setAttribute('data-count',cfg.statAnnees);
+    ['statAnneesEl','counterAnneesEl'].forEach(function(id){var e=document.getElementById(id);if(e)e.setAttribute('data-count',cfg.statAnnees);});
   }
+  var showClients=cfg.afficherStatClients!==false, showAnnees=cfg.afficherStatAnnees!==false;
+  [['heroStatClientsBox',showClients],['counterBoxClients',showClients],['heroStatAnneesBox',showAnnees],['counterBoxAnnees',showAnnees]].forEach(function(x){
+    var e=document.getElementById(x[0]);if(e)e.style.display=x[1]?'':'none';
+  });
+  if(cfg.statInterventions!==undefined&&cfg.statInterventions!==null&&cfg.statInterventions!==''){
+    var elI=document.getElementById('counterInterventionsEl');if(elI)elI.setAttribute('data-count',cfg.statInterventions);
+  }
+  var showInterv=cfg.afficherStatInterventions!==false;
+  var boxI=document.getElementById('counterBoxInterventions');if(boxI)boxI.style.display=showInterv?'':'none';
+  // La grille s'adapte au nombre de blocs restants
+  document.querySelectorAll('.hero-stats,.counter-grid').forEach(function(g){
+    g.style.gridTemplateColumns='repeat(auto-fit,minmax(120px,1fr))';
+  });
+
+  // Ordre des catégories de la galerie défini dans l'appli
+  galerieCategoriesOrdre=Array.isArray(cfg.galerieCategories)?cfg.galerieCategories:[];
+  renderGalerieCats();
 
   // Téléphone : on construit le lien tel: à partir du numéro affiché
   if(cfg.telephone){
     var digits=cfg.telephone.replace(/[^\d+]/g,'');
     if(digits.charAt(0)==='0')digits='+33'+digits.substring(1);
     setHref('heroCallBtn',digits?('tel:'+digits):null);
+    setHref('mobileCallBtn',digits?('tel:'+digits):null);
     setHref('contactTelLink',digits?('tel:'+digits):null);
     setText('contactTelLink',cfg.telephone);
   }
@@ -1136,24 +1291,31 @@ function applySiteConfig(cfg){
   setText('contactHoraires2',cfg.horaires2);
 
   // Réseaux sociaux : masqués si aucune URL renseignée
+  emailjsCfg=cfg.emailjsConfig||{};
+  var gA=document.getElementById('googleAvisBtn');
+  if(gA){if(urlHttps(cfg.googleAvisUrl)){gA.href=urlHttps(cfg.googleAvisUrl);gA.style.display='inline-flex';}else{gA.style.display='none';}}
+  var etp=document.getElementById('etapes');
+  if(etp)etp.style.display=cfg.afficherCommentCaMarche===false?'none':'';
+  var heroFb=document.getElementById('heroFacebookBtn');
+  if(heroFb){if(urlHttps(cfg.facebookUrl)){heroFb.href=urlHttps(cfg.facebookUrl);heroFb.style.display='inline-flex';}else{heroFb.style.display='none';}}
   var fb=document.getElementById('socialFacebook');
-  if(fb){if(cfg.facebookUrl){fb.href=cfg.facebookUrl;fb.style.display='';}else{fb.style.display='none';}}
+  if(fb){if(urlHttps(cfg.facebookUrl)){fb.href=urlHttps(cfg.facebookUrl);fb.style.display='';}else{fb.style.display='none';}}
   var ig=document.getElementById('socialInstagram');
-  if(ig){if(cfg.instagramUrl){ig.href=cfg.instagramUrl;ig.style.display='';}else{ig.style.display='none';}}
+  if(ig){if(urlHttps(cfg.instagramUrl)){ig.href=urlHttps(cfg.instagramUrl);ig.style.display='';}else{ig.style.display='none';}}
 
   // Zone d'intervention : liste de villes séparées par des virgules
   if(cfg.zoneVilles){
     var villes=cfg.zoneVilles.split(',').map(function(v){return v.trim();}).filter(Boolean);
     if(villes.length){
       var zc=document.getElementById('zoneTagsEl');
-      if(zc)zc.innerHTML=villes.map(function(v){return '<div class="zone-tag">'+v.replace(/</g,'&lt;')+'</div>';}).join('');
+      if(zc)zc.innerHTML=villes.map(function(v){return '<div class="zone-tag">'+escH(v)+'</div>';}).join('');
     }
   }
 
   // Carte Google Maps
-  if(cfg.mapEmbedUrl){
+  if(urlCarte(cfg.mapEmbedUrl)){
     var mc=document.getElementById('mapContainer');
-    if(mc)mc.innerHTML='<iframe src="'+cfg.mapEmbedUrl+'" style="width:100%;height:100%;border:0" loading="lazy"></iframe>';
+    if(mc)mc.innerHTML='<iframe src="'+escH(urlCarte(cfg.mapEmbedUrl))+'" title="Carte de la zone d\'intervention" style="width:100%;height:100%;border:0" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>';
   }
 
   // Mentions légales / confidentialité / CGV — reconstruites avec les infos à jour
@@ -1218,6 +1380,8 @@ function animateCounter(el,target,duration){
 var allAvis=[];
 var avisFilterNote=0;
 
+function escAvis(s){return (s===null||s===undefined?'':String(s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
 function formatNom(raw){
   if(!raw)return 'Client';
   var parts=(raw+'').trim().split(/\s+/);
@@ -1234,12 +1398,13 @@ function renderAvis(){
   }
   grid.innerHTML=filtered.map(function(a){
     var stars='⭐'.repeat(a.note||0)+'<span style="opacity:.25">★</span>'.repeat(5-(a.note||0));
-    var nom=formatNom(a.nomClient);
+    var nom=escAvis(formatNom(a.nomClient));
     var date=a.date?new Date(a.date).toLocaleDateString('fr-FR',{month:'long',year:'numeric'}):'';
+    var badgeGoogle=a.source==='google'?'<span class="avis-source" title="Avis publié sur Google"><b>G</b> Avis Google</span>':'';
     return '<div class="avis-card">'+
       '<div class="avis-stars">'+stars+'</div>'+
-      '<p class="avis-comment">'+(a.commentaire||'<em style="opacity:.6">Pas de commentaire.</em>')+'</p>'+
-      '<div class="avis-meta"><span class="avis-name">'+nom+'</span><span class="avis-date">'+date+'</span></div>'+
+      '<p class="avis-comment">'+(a.commentaire?escAvis(a.commentaire):'<em style="opacity:.6">Pas de commentaire.</em>')+'</p>'+
+      '<div class="avis-meta"><span class="avis-name">'+nom+badgeGoogle+'</span><span class="avis-date">'+date+'</span></div>'+
     '</div>';
   }).join('');
 }
@@ -1251,38 +1416,74 @@ function filterAvis(note,btn){
   renderAvis();
 }
 
+var _avisSite=[];
+var _avisGoogle=[];
+
+// Fusionne les avis clients (page avis.html) et les avis Google (saisis dans l'appli de gestion)
+// dans la même liste : mêmes filtres, même moyenne, même compteur.
+function majAvisAffiches(){
+  allAvis=_avisSite.concat(_avisGoogle).sort(function(a,b){return String(b.date||'').localeCompare(String(a.date||''));});
+  var total=allAvis.length;
+  var moyenne=total?allAvis.reduce(function(s,a){return s+(a.note||0);},0)/total:0;
+  document.getElementById('avisMoyenneVal').textContent=total?moyenne.toFixed(1):'—';
+  document.getElementById('avisTotalLabel').textContent=total;
+  document.getElementById('heroAvisCount').textContent=total;
+  document.getElementById('heroBadgeNote').textContent=total?moyenne.toFixed(1):'—';
+  var counterEl=document.getElementById('counterAvis');
+  if(counterEl&&total>0){counterEl.textContent=total;}
+  // Met a jour les data-count des hero-stats pour l'animation
+  document.querySelectorAll('[data-count]').forEach(function(el){
+    if(el.id==='heroAvisCount'){el.setAttribute('data-count',total);}
+  });
+  renderAvis();
+}
+
 function loadAvis(){
   var q=COMPTE_PREFIXE
     ?fbDb.collection('avisClients').where('comptePrefixe','==',COMPTE_PREFIXE).orderBy('date','desc')
     :fbDb.collection('avisClients').orderBy('date','desc');
   q.onSnapshot(function(snap){
-    allAvis=[];
+    _avisSite=[];
     snap.forEach(function(doc){
       var d=doc.data();
       // On ne prend QUE les champs publics — on ignore code, comptePrefixe, etc.
-      allAvis.push({
+      _avisSite.push({
         note:d.note||0,
         commentaire:d.commentaire||'',
         nomClient:d.nomClient||d.nom||'',
-        date:d.date||''
+        date:d.date||'',
+        source:'site'
       });
     });
-    var total=allAvis.length;
-    var moyenne=total?allAvis.reduce(function(s,a){return s+(a.note||0);},0)/total:0;
-    document.getElementById('avisMoyenneVal').textContent=total?moyenne.toFixed(1):'—';
-    document.getElementById('avisTotalLabel').textContent=total;
-    document.getElementById('heroAvisCount').textContent=total;
-    document.getElementById('heroBadgeNote').textContent=total?moyenne.toFixed(1):'—';
-    var counterEl=document.getElementById('counterAvis');
-    if(counterEl&&total>0){counterEl.textContent=total;}
-    // Met a jour les data-count des hero-stats pour l'animation
-    document.querySelectorAll('[data-count]').forEach(function(el){
-      if(el.id==='heroAvisCount'){el.setAttribute('data-count',total);}
-    });
-    renderAvis();
+    majAvisAffiches();
   },function(e){
     document.getElementById('avisGrid').innerHTML='<div class="avis-empty">Avis temporairement indisponibles.</div>';
     console.error('Erreur avis:',e);
+  });
+
+  // Avis Google (collection "avisGoogle" : lecture publique, écriture admin uniquement).
+  // Si les règles Firestore ne sont pas encore ajoutées, on ignore simplement ces avis
+  // sans casser l'affichage des avis clients.
+  var qg=COMPTE_PREFIXE
+    ?fbDb.collection('avisGoogle').where('comptePrefixe','==',COMPTE_PREFIXE)
+    :fbDb.collection('avisGoogle');
+  qg.onSnapshot(function(snap){
+    _avisGoogle=[];
+    snap.forEach(function(doc){
+      var d=doc.data();
+      _avisGoogle.push({
+        note:d.note||0,
+        commentaire:d.commentaire||'',
+        nomClient:d.nomClient||d.nom||'',
+        date:d.date||'',
+        source:'google'
+      });
+    });
+    majAvisAffiches();
+  },function(e){
+    console.warn('Avis Google indisponibles (règles Firestore à ajouter ?) :',e);
+    _avisGoogle=[];
+    majAvisAffiches();
   });
 }
 
@@ -1292,6 +1493,7 @@ function loadAvis(){
 var galerieData=[];
 var galerieFiltreActif='all';
 var galerieCategoriesConnues=new Set(['all']);
+var galerieCategoriesOrdre=[];
 
 function loadGalerie(){
   fbDb.collection('galerie').orderBy('date','desc').onSnapshot(function(snap){
@@ -1312,11 +1514,16 @@ function loadGalerie(){
 
 function renderGalerieCats(){
   var container=document.getElementById('galerieCats');
+  if(!container)return;
   container.innerHTML='';
-  galerieCategoriesConnues.forEach(function(cat){
+  // Ordre : "Tout voir", puis les catégories de l'appli (si elles ont des photos), puis les autres
+  var liste=['all'];
+  galerieCategoriesOrdre.forEach(function(c){if(galerieCategoriesConnues.has(c)&&liste.indexOf(c)<0)liste.push(c);});
+  galerieCategoriesConnues.forEach(function(c){if(liste.indexOf(c)<0)liste.push(c);});
+  liste.forEach(function(cat){
     var btn=document.createElement('button');
     btn.className='filter-btn'+(cat===galerieFiltreActif?' active':'');
-    btn.textContent=cat==='all'?'Tout voir':cat;
+    btn.textContent=cat==='all'?'Tout voir':cat; // textContent : pas d'injection HTML
     btn.onclick=function(){filterGalerie(cat,btn);};
     container.appendChild(btn);
   });
@@ -1337,13 +1544,14 @@ function renderGalerie(){
       (isAdmin?'Aucune photo dans cette catégorie. Ajoutez-en via la barre admin.':'Aucune photo dans cette catégorie.')+'</div>';
     return;
   }
+  filtered=filtered.filter(function(it){return urlImage(it.url);});
   grid.innerHTML=filtered.map(function(item){
-    return '<div class="galerie-item" onclick="openLightbox(\''+item.url+'\')">'+
-      '<img src="'+item.url+'" alt="'+(item.categorie||'Réalisation')+'" loading="lazy" onerror="this.closest(\'.galerie-item\').classList.add(\'img-broken\');this.style.display=\'none\'">'+
+    return '<div class="galerie-item" data-url="'+escH(urlImage(item.url))+'" onclick="openLightbox(this.dataset.url)">'+
+      '<img src="'+escH(urlImage(item.url))+'" alt="'+escH(item.categorie||'Réalisation')+'" loading="lazy" onerror="this.closest(\'.galerie-item\').classList.add(\'img-broken\');this.style.display=\'none\'">'+
       '<div class="galerie-broken-msg">⚠️ Image introuvable<br><span style="font-size:.72rem;opacity:.8">Le lien fourni n\'est pas une image directe</span></div>'+
       '<div class="galerie-overlay">'+
         '<span style="font-size:1.8rem">🔍</span>'+
-        '<span style="font-size:.85rem;font-weight:600">'+(item.categorie||'')+'</span>'+
+        '<span style="font-size:.85rem;font-weight:600">'+escH(item.categorie||'')+'</span>'+
       '</div>'+
       (isAdmin?'<button class="galerie-del" onclick="event.stopPropagation();deleteImage(\''+item.id+'\',\''+item.storagePath+'\')">✕</button>':'') +
     '</div>';
@@ -1351,6 +1559,7 @@ function renderGalerie(){
 }
 
 function openLightbox(url){
+  url=urlImage(url);if(!url)return;
   document.getElementById('lightboxImg').src=url;
   document.getElementById('lightbox').classList.add('open');
 }
@@ -1379,12 +1588,40 @@ function verifierCodePromoSaisi(){
   }
 }
 
+// ── Anti-spam & validation (honeypot, délai entre envois, formats, longueurs) ──
+var _dernierEnvoiForm=0;
+function protegerFormulaires(){
+  document.querySelectorAll('.devis-form').forEach(function(f){
+    f.querySelectorAll('input:not([type=hidden]):not([type=date]):not([type=time]),select').forEach(function(i){if(!i.maxLength||i.maxLength<0)i.maxLength=200;});
+    f.querySelectorAll('textarea').forEach(function(t){if(!t.maxLength||t.maxLength<0)t.maxLength=2000;});
+    if(!f.querySelector('.hp-champ')){
+      var h=document.createElement('input');h.type='text';h.name='website';h.className='hp-champ';h.tabIndex=-1;h.autocomplete='off';
+      h.setAttribute('aria-hidden','true');h.style.cssText='position:absolute;left:-9999px;width:1px;height:1px;opacity:0';
+      f.style.position=f.style.position||'relative';f.appendChild(h);
+    }
+  });
+}
+function formulaireAutorise(formEl,telId,emailId){
+  var hp=formEl&&formEl.querySelector('.hp-champ');
+  if(hp&&hp.value)return false; // robot : on ignore sans rien signaler
+  var tel=telId?(document.getElementById(telId)||{}).value||'':'';
+  if(tel&&!/^\+?[\d\s.\-()]{8,20}$/.test(tel.trim())){alert('Merci de saisir un numéro de téléphone valide.');return false;}
+  var em=emailId?(document.getElementById(emailId)||{}).value||'':'';
+  if(em&&!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em.trim())){alert('Merci de saisir une adresse email valide.');return false;}
+  if(Date.now()-_dernierEnvoiForm<30000){alert('Merci de patienter quelques secondes avant un nouvel envoi.');return false;}
+  _dernierEnvoiForm=Date.now();
+  return true;
+}
+document.addEventListener('DOMContentLoaded',protegerFormulaires);
+if(document.readyState!=='loading')protegerFormulaires();
+
 async function sendDevis(){
   var prenom=document.getElementById('dPrenom').value.trim();
   var nom=document.getElementById('dNom').value.trim();
   var tel=document.getElementById('dTel').value.trim();
   var desc=document.getElementById('dDesc').value.trim();
   if(!prenom||!nom||!tel||!desc){alert('Merci de remplir les champs obligatoires (*).');return;}
+  if(!formulaireAutorise(document.getElementById('dPrenom').closest('.devis-form'),'dTel','dEmail'))return;
   var codePromoSaisi=document.getElementById('dCodePromo').value.trim().toUpperCase();
   var promoValide=codePromoSaisi?promosActivesVitrine.find(function(p){return (p.code||'').trim().toUpperCase()===codePromoSaisi;}):null;
   try{
@@ -1399,6 +1636,7 @@ async function sendDevis(){
       statut:'nouveau'
     });
     traceEvent('demande_devis',prenom+' '+nom);
+    envoyerEmailsJS({objet:'Demande de devis',prenom:prenom,nom:nom,tel:tel,email:document.getElementById('dEmail').value.trim(),adresse:document.getElementById('dAdresse').value.trim(),message:desc});
     document.getElementById('devisSuccess').classList.add('show');
     ['dPrenom','dNom','dTel','dEmail','dAdresse','dDesc','dCodePromo'].forEach(function(id){document.getElementById(id).value='';});
     document.getElementById('dCodePromoStatus').textContent='';
@@ -1445,6 +1683,7 @@ async function sendRdv(){
   var heureSouhaitee=document.getElementById('rHeure').value;
 
   if(!prenom||!nom||!tel){alert('Merci de remplir les champs obligatoires (*).');return;}
+  if(!formulaireAutorise(document.getElementById('rPrenom').closest('.devis-form'),'rTel','rEmail'))return;
   if(rdvModeActuel==='rdv'&&(!dateSouhaitee||!heureSouhaitee)){alert('Merci d\'indiquer la date et l\'heure souhaitées pour votre rendez-vous.');return;}
   if(rdvModeActuel==='rdv'&&await dateEstBloquee(dateSouhaitee)){alert('Cette date n\'est malheureusement pas disponible. Merci d\'en choisir une autre.');return;}
 
@@ -1459,6 +1698,7 @@ async function sendRdv(){
       date:firebase.firestore.FieldValue.serverTimestamp()
     });
     traceEvent(rdvModeActuel==='rdv'?'demande_rdv':'demande_rappel',prenom+' '+nom+(dateSouhaitee?' — '+dateSouhaitee:''));
+    envoyerEmailsJS({objet:rdvModeActuel==='rdv'?'Demande de rendez-vous':'Demande de rappel',prenom:prenom,nom:nom,tel:tel,email:email,message:message,dateSouhaitee:rdvModeActuel==='rdv'?(dateSouhaitee+' '+heureSouhaitee):''});
     document.getElementById('rdvSuccess').classList.add('show');
     ['rPrenom','rNom','rTel','rEmail','rMessage','rDate','rHeure'].forEach(function(id){document.getElementById(id).value='';});
     setTimeout(function(){document.getElementById('rdvSuccess').classList.remove('show');},6000);
@@ -1476,9 +1716,11 @@ async function sendContact(){
   var email=document.getElementById('cEmail').value.trim();
   var msg=document.getElementById('cMsg').value.trim();
   if(!nom||!msg){alert('Veuillez renseigner votre nom et votre message.');return;}
+  if(!formulaireAutorise(document.getElementById('cNom').closest('.devis-form')||document.getElementById('cNom').parentElement,null,'cEmail'))return;
   try{
     await fbDb.collection('contacts').add({nom:nom,email:email,message:msg,date:firebase.firestore.FieldValue.serverTimestamp()});
     traceEvent('message_contact',nom);
+    envoyerEmailsJS({objet:'Message via le site',nom:nom,email:email,message:msg});
     document.getElementById('contactSuccess').classList.add('show');
     document.getElementById('cNom').value='';document.getElementById('cEmail').value='';document.getElementById('cMsg').value='';
     setTimeout(function(){document.getElementById('contactSuccess').classList.remove('show');},5000);
@@ -1525,508 +1767,39 @@ if('serviceWorker' in navigator){
 // ════════════════════════════════════════════════════════
 loadAvis();
 loadGalerie();
-</script>
 
-<script>
-/* ═══════════════════════════════════════════════════════════════
-   DEVKIT — panneau développeur (test uniquement, non lié à la prod)
-   Activation : ouvrez la console (F12) et tapez :
-       activerModeDev("DEV-2026")
-   Désactivation : desactiverModeDev()
-   ═══════════════════════════════════════════════════════════════ */
+// Boutons d'envoi : état « chargement » + protection contre le double clic
+function envelopperEnvoi(nomFonction,selecteur){
+  var original=window[nomFonction];
+  if(typeof original!=='function')return;
+  window[nomFonction]=async function(){
+    var b=document.querySelector(selecteur);
+    if(b&&b.disabled)return;
+    if(b){b.disabled=true;b.classList.add('is-loading');}
+    try{await original.apply(this,arguments);}
+    finally{if(b){b.disabled=false;b.classList.remove('is-loading');}}
+  };
+}
+envelopperEnvoi('sendDevis','[onclick="sendDevis()"]');
+envelopperEnvoi('sendRdv','#rdvSubmitBtn');
+envelopperEnvoi('sendContact','[onclick="sendContact()"]');
+
+// Menu : met en évidence la section affichée + bouton « retour en haut »
 (function(){
-  'use strict';
-
-  var DEV_CODE = "DEV-2026";
-  var STORAGE_FLAG = "devkit_actif";
-  var LOG_MAX = 60;
-  var logs = [];
-
-  // ── Interception des erreurs / logs pour affichage mobile ──────
-  function pushLog(type, args){
-    try{
-      var msg = Array.prototype.slice.call(args).map(function(a){
-        if(a instanceof Error) return a.message;
-        if(typeof a==='object'){ try{return JSON.stringify(a);}catch(e){return String(a);} }
-        return String(a);
-      }).join(' ');
-      logs.push({type:type, msg:msg, time:new Date().toLocaleTimeString('fr-FR')});
-      if(logs.length>LOG_MAX) logs.shift();
-      renderLogPanel();
-    }catch(e){}
-  }
-
-  var origError = console.error, origWarn = console.warn, origLog = console.log;
-  console.error = function(){ pushLog('error', arguments); origError.apply(console, arguments); };
-  console.warn  = function(){ pushLog('warn', arguments);  origWarn.apply(console, arguments); };
-  window.addEventListener('error', function(e){
-    pushLog('error', [e.message + ' (' + (e.filename||'').split('/').pop() + ':' + e.lineno + ')']);
-  });
-  window.addEventListener('unhandledrejection', function(e){
-    pushLog('error', ['Promise rejetée: ' + (e.reason && e.reason.message ? e.reason.message : e.reason)]);
-  });
-
-  // ── Utilitaires génériques ─────────────────────────────────────
-  function rand(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
-  function randInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
-  function pad4(n){ return String(n).padStart(4,'0'); }
-  function todayISO(){ return new Date().toISOString().split('T')[0]; }
-  function isoDaysAgo(n){ var d=new Date(); d.setDate(d.getDate()-n); return d.toISOString().split('T')[0]; }
-  function codeClientRandom(){ return Math.random().toString(36).substring(2,8).toUpperCase(); }
-
-  var NOMS = ["Dupont","Martin","Bernard","Petit","Durand","Leroy","Moreau","Simon","Laurent","Lefebvre","Michel","Garcia","David","Bertrand","Roux","Vincent","Fournier","Morel","Girard","Andre"];
-  var PRENOMS = ["Jean","Marie","Pierre","Sophie","Nicolas","Isabelle","Julien","Camille","Thomas","Emma","Lucas","Chloe","Antoine","Laura","Maxime"];
-  var VILLES = [["Valenciennes","59300"],["Lille","59000"],["Douai","59500"],["Cambrai","59400"],["Amiens","80000"],["Arras","62000"],["Saint-Quentin","02100"]];
-  var RUES = ["rue des Lilas","avenue Victor Hugo","rue de la Paix","impasse des Roses","boulevard Gambetta","rue du Moulin","allée des Chênes"];
-  var PRESTATIONS = [
-    {desc:"Installation chauffe-eau électrique", prix:420},
-    {desc:"Dépannage plomberie - fuite robinet", prix:95},
-    {desc:"Pose carrelage salle de bain (m²)", prix:55},
-    {desc:"Rénovation électrique complète", prix:3200},
-    {desc:"Peinture pièce standard (m²)", prix:28},
-    {desc:"Installation VMC", prix:680},
-    {desc:"Remplacement chaudière gaz", prix:2450},
-    {desc:"Débouchage canalisation", prix:120},
-    {desc:"Pose fenêtre PVC", prix:540},
-    {desc:"Isolation combles (m²)", prix:38}
-  ];
-
-  function fakeClient(idBase){
-    var ville = rand(VILLES);
-    var nom = rand(PRENOMS)+" "+rand(NOMS);
-    return {
-      id: idBase,
-      nom: nom,
-      contact: nom,
-      email: nom.toLowerCase().replace(/ /g,'.').replace(/[éè]/g,'e') + "@exemple-test.fr",
-      tel: "0"+randInt(6,7)+" "+randInt(10,99)+" "+randInt(10,99)+" "+randInt(10,99)+" "+randInt(10,99),
-      adresse: randInt(1,150)+" "+rand(RUES),
-      cp: ville[1],
-      ville: ville[0],
-      siret: "",
-      numeroClient: "CLI-"+pad4(randInt(1,9999)),
-      codeClient: codeClientRandom()
-    };
-  }
-
-  function fakeDoc(idBase, type, clientId, numCounter){
-    var nbLignes = randInt(1,4);
-    var lignes = [];
-    for(var i=0;i<nbLignes;i++){
-      var p = rand(PRESTATIONS);
-      lignes.push({desc:p.desc, qty:randInt(1,5), prix:p.prix, remise: rand([0,0,0,5,10])});
-    }
-    var ht = lignes.reduce(function(s,l){ return s + l.qty*l.prix*(1-l.remise/100); },0);
-    var isDevis = type==='devis';
-    var year = new Date().getFullYear();
-    var joursAgo = randInt(0,60);
-    return {
-      id: idBase,
-      type: type,
-      numero: (isDevis?'D':'F')+year+'-'+pad4(numCounter),
-      date: isoDaysAgo(joursAgo),
-      d2: '30',
-      clientId: clientId,
-      objet: rand(["Travaux chantier", "Intervention urgente", "Rénovation", "Suivi contrat annuel", ""]),
-      notes: "",
-      chAdr: "", chCp: "", chVille: "",
-      lignes: lignes,
-      statut: isDevis ? rand(['en-cours','en-cours','signe']) : rand(['emise','emise','payee']),
-      totalHT: Math.round(ht*100)/100,
-      signature: ''
-    };
-  }
-
-  // ── Génération de données de test (app principale) ─────────────
-  function genererDonneesTest(nbClients, nbDocs){
-    nbClients = nbClients || 6;
-    nbDocs = nbDocs || 10;
-    if(typeof db === 'undefined'){ alert('DEVKIT: variable "db" introuvable sur cette page.'); return; }
-    var baseId = Date.now();
-    var newClients = [];
-    for(var i=0;i<nbClients;i++){
-      newClients.push(fakeClient(baseId+i));
-    }
-    db.clients = db.clients.concat(newClients);
-
-    for(var j=0;j<nbDocs;j++){
-      var type = j%3===0 ? 'facture' : 'devis';
-      var cl = rand(newClients);
-      var counter = type==='devis' ? (db.counters.devis||1) : (db.counters.facture||1);
-      var doc = fakeDoc(baseId+1000+j, type, cl.id, counter);
-      db.documents.push(doc);
-      if(type==='devis') db.counters.devis = counter+1; else db.counters.facture = counter+1;
-    }
-
-    if(typeof sDB==='function') sDB();
-    ['renderClients','renderDevis','renderFactures','renderDash','renderProduits'].forEach(function(fn){
-      if(typeof window[fn]==='function'){ try{ window[fn](); }catch(e){} }
+  var liens={};
+  document.querySelectorAll('.nav-links a[href^="#"]').forEach(function(a){liens[a.getAttribute('href').slice(1)]=a;});
+  var spy=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      var a=liens[e.target.id];if(!a)return;
+      if(e.isIntersecting){Object.keys(liens).forEach(function(k){liens[k].classList.remove('active');});a.classList.add('active');}
     });
-    alert('DEVKIT: '+nbClients+' clients et '+nbDocs+' documents de test ajoutés.');
-  }
-
-  // ── Voir / exporter le localStorage brut ────────────────────────
-  function detectStorageKey(){
-    var candidates = ['gdf_v5'];
-    for(var i=0;i<candidates.length;i++){
-      if(localStorage.getItem(candidates[i])!==null) return candidates[i];
-    }
-    // fallback : première clé qui ressemble à du JSON volumineux
-    for(var k in localStorage){
-      if(localStorage.hasOwnProperty(k)){
-        var v = localStorage.getItem(k);
-        if(v && v.length>50 && (v[0]==='{'||v[0]==='[')) return k;
-      }
-    }
-    return null;
-  }
-
-  function voirStorage(){
-    var key = detectStorageKey();
-    if(!key){ alert('DEVKIT: aucune donnée locale trouvée.'); return; }
-    var raw = localStorage.getItem(key);
-    var w = window.open('', '_blank');
-    if(!w){ alert('DEVKIT: autorisez les pop-ups pour voir les données.'); return; }
-    w.document.write('<pre style="white-space:pre-wrap;word-break:break-all;font-family:monospace;font-size:12px;padding:16px;">'+
-      raw.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</pre>');
-    w.document.title = 'DEVKIT - localStorage['+key+']';
-  }
-
-  function exporterStorageJSON(){
-    var key = detectStorageKey();
-    if(!key){ alert('DEVKIT: aucune donnée locale trouvée.'); return; }
-    var raw = localStorage.getItem(key);
-    var blob = new Blob([raw], {type:'application/json'});
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement('a');
-    a.href = url; a.download = key+'_export_'+todayISO()+'.json';
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }
-
-  function copierStoragePressePapier(){
-    var key = detectStorageKey();
-    if(!key){ alert('DEVKIT: aucune donnée locale trouvée.'); return; }
-    var raw = localStorage.getItem(key);
-    if(navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(raw).then(function(){
-        alert('DEVKIT: contenu de "'+key+'" copié dans le presse-papier.');
-      }).catch(function(){ prompt('Copiez manuellement :', raw); });
-    } else {
-      prompt('Copiez manuellement :', raw);
-    }
-  }
-
-  // ── Reset complet ────────────────────────────────────────────
-  function resetComplet(){
-    if(!confirm('DEVKIT: supprimer TOUTES les données locales de cette page et recharger ?')) return;
-    try{
-      var key = detectStorageKey();
-      if(key) localStorage.removeItem(key);
-      localStorage.removeItem('mobileViewEnabled');
-      localStorage.removeItem('notifsActivees');
-    }catch(e){}
-    location.reload();
-  }
-
-  // ── Désactiver les validations de formulaire ────────────────────
-  var validationsDesactivees = false;
-  function toggleValidations(force){
-    validationsDesactivees = (force!==undefined) ? force : !validationsDesactivees;
-    document.querySelectorAll('input[required], select[required], textarea[required]').forEach(function(el){
-      if(validationsDesactivees) el.removeAttribute('required'); else el.setAttribute('required','required');
-    });
-    document.querySelectorAll('form').forEach(function(f){ f.setAttribute('novalidate', validationsDesactivees ? 'novalidate' : ''); if(!validationsDesactivees) f.removeAttribute('novalidate'); });
-    return validationsDesactivees;
-  }
-
-  // ── Bypass écran de connexion (gestion-devis-factures.html) ────
-  function bypassAuth(){
-    if(typeof skipAuthAndUseLocal==='function'){
-      skipAuthAndUseLocal();
-      return 'DEVKIT: connexion Firebase court-circuitée, mode local activé.';
-    }
-    return 'DEVKIT: fonction skipAuthAndUseLocal introuvable sur cette page.';
-  }
-
-  // ── Bypass consultation.html : simuler un client + documents ───
-  function simulerConsultation(){
-    if(typeof afficherListeDocuments!=='function'){
-      alert('DEVKIT: cette fonction est spécifique à consultation.html');
-      return;
-    }
-    var clientFake = {nom:'Client Test DEVKIT', numeroClient:'CLI-TEST'};
-    var docs = [
-      {type:'devis', numero:'D2026-0001', date:isoDaysAgo(3), totalHT:1250.5, devisSigne:false, _firestoreId:'devkit-fake-1'},
-      {type:'devis', numero:'D2026-0002', date:isoDaysAgo(10), totalHT:840, devisSigne:true, _firestoreId:'devkit-fake-2'},
-      {type:'facture', numero:'F2026-0001', date:isoDaysAgo(20), totalHT:2100, statut:'emise', _firestoreId:'devkit-fake-3'}
-    ];
-    window.__devkitFakeDocs = {};
-    docs.forEach(function(d){ window.__devkitFakeDocs[d._firestoreId] = fakeDocDetail(d, clientFake); });
-    afficherListeDocuments(clientFake, docs);
-
-    // On intercepte ouvrirDocument pour servir les fausses données au lieu d'appeler Firestore
-    if(typeof window.__devkitOrigOuvrirDocument==='undefined' && typeof ouvrirDocument==='function'){
-      window.__devkitOrigOuvrirDocument = ouvrirDocument;
-      window.ouvrirDocument = function(id){
-        if(window.__devkitFakeDocs && window.__devkitFakeDocs[id]){
-          document.getElementById('liste-wrap').style.display='none';
-          afficherDocument(window.__devkitFakeDocs[id], id);
-        } else {
-          window.__devkitOrigOuvrirDocument(id);
-        }
-      };
-    }
-  }
-  function fakeDocDetail(d, clientFake){
-    return Object.assign({}, d, {
-      clientNom: clientFake.nom,
-      clientAdresse: "12 rue de Test", clientCp:"59300", clientVille:"Valenciennes",
-      lignes: [
-        {desc:"Prestation de test DEVKIT", qty:1, prix:d.totalHT, remise:0}
-      ],
-      entrepriseNom: "Entreprise Démo",
-      d2: "30"
-    });
-  }
-
-  // ── Navigation rapide entre les 3 pages ─────────────────────────
-  function detectFileNames(){
-    // Ces noms doivent correspondre aux fichiers réellement déployés
-    return {
-      gestion: 'gestion-devis-factures.html',
-      consultation: 'consultation.html',
-      vitrine: 'vitrine.html'
-    };
-  }
-
-  // ── Simulation d'états (payée/non payée, signée/non signée…) ───
-  function simulerEtatDocument(id, patch){
-    if(typeof db==='undefined'){ alert('DEVKIT: "db" introuvable.'); return; }
-    var doc = db.documents.find(function(x){ return x.id===id; });
-    if(!doc){ alert('DEVKIT: document id='+id+' introuvable.'); return; }
-    Object.assign(doc, patch);
-    if(typeof sDB==='function') sDB();
-    ['renderDevis','renderFactures','renderDash'].forEach(function(fn){ if(typeof window[fn]==='function'){ try{window[fn]();}catch(e){} } });
-    console.log('DEVKIT: document', id, 'mis à jour', patch);
-  }
-
-  // ── Horloge fictive (avance/recule le temps perçu par l'app) ───
-  var dateOffsetMs = 0;
-  var RealDate = Date;
-  function activerHorlogeFictive(dateISO){
-    var target = new Date(dateISO);
-    dateOffsetMs = target.getTime() - RealDate.now();
-    window.Date = function(){
-      if(arguments.length===0) return new RealDate(RealDate.now()+dateOffsetMs);
-      return new (Function.prototype.bind.apply(RealDate, [null].concat(Array.prototype.slice.call(arguments))))();
-    };
-    window.Date.prototype = RealDate.prototype;
-    window.Date.now = function(){ return RealDate.now()+dateOffsetMs; };
-    console.log('DEVKIT: horloge fictive activée →', new Date().toString());
-  }
-  function desactiverHorlogeFictive(){
-    window.Date = RealDate;
-    dateOffsetMs = 0;
-    console.log('DEVKIT: horloge réelle restaurée.');
-  }
-
-  // ── Panneau flottant ─────────────────────────────────────────
-  var panelEl = null;
-  function buildPanel(){
-    if(panelEl) return panelEl;
-    var css = document.createElement('style');
-    css.textContent = [
-      '#devkit-fab{position:fixed;bottom:16px;right:16px;z-index:999999;width:48px;height:48px;border-radius:50%;',
-      'background:#111827;color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;',
-      'cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.35);user-select:none;}',
-      '#devkit-panel{position:fixed;bottom:74px;right:16px;z-index:999999;width:320px;max-height:70vh;overflow:auto;',
-      'background:#111827;color:#E5E7EB;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.45);',
-      'font-family:monospace;font-size:12.5px;display:none;}',
-      '#devkit-panel.open{display:block;}',
-      '#devkit-panel h3{margin:0;padding:10px 14px;background:#1F2937;border-radius:12px 12px 0 0;font-size:13px;color:#F9FAFB;',
-      'display:flex;justify-content:space-between;align-items:center;}',
-      '#devkit-panel .devkit-close{cursor:pointer;color:#9CA3AF;}',
-      '#devkit-panel section{padding:10px 14px;border-bottom:1px solid #1F2937;}',
-      '#devkit-panel section h4{margin:0 0 8px;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:#9CA3AF;}',
-      '#devkit-panel button{display:block;width:100%;text-align:left;background:#1F2937;color:#E5E7EB;border:none;',
-      'border-radius:6px;padding:7px 10px;margin-bottom:6px;cursor:pointer;font-family:monospace;font-size:12px;}',
-      '#devkit-panel button:hover{background:#374151;}',
-      '#devkit-panel .devkit-row{display:flex;gap:6px;}',
-      '#devkit-panel .devkit-row button{flex:1;}',
-      '#devkit-panel input[type=text],#devkit-panel input[type=number]{width:100%;box-sizing:border-box;background:#0B1220;',
-      'color:#E5E7EB;border:1px solid #374151;border-radius:6px;padding:6px 8px;margin-bottom:6px;font-family:monospace;font-size:12px;}',
-      '#devkit-log{max-height:140px;overflow:auto;background:#0B1220;border-radius:6px;padding:6px 8px;}',
-      '#devkit-log div{padding:2px 0;border-bottom:1px solid #1F2937;word-break:break-word;}',
-      '#devkit-log .err{color:#F87171;}',
-      '#devkit-log .warn{color:#FBBF24;}',
-      '#devkit-badge{position:fixed;top:0;left:0;right:0;background:#DC2626;color:#fff;text-align:center;',
-      'font-family:monospace;font-size:11px;padding:3px;z-index:999998;letter-spacing:.05em;}'
-    ].join('');
-    document.head.appendChild(css);
-
-    var badge = document.createElement('div');
-    badge.id = 'devkit-badge';
-    badge.textContent = '🛠 MODE DÉVELOPPEUR ACTIF — données et actions de test uniquement';
-    document.body.appendChild(badge);
-
-    var fab = document.createElement('div');
-    fab.id = 'devkit-fab';
-    fab.textContent = '🛠';
-    fab.title = 'Panneau développeur';
-    fab.onclick = function(){ panelEl.classList.toggle('open'); };
-    document.body.appendChild(fab);
-
-    var files = detectFileNames();
-    var pageHint = (function(){
-      var p = location.pathname.split('/').pop();
-      if(!p) return '';
-      return p;
-    })();
-
-    var panel = document.createElement('div');
-    panel.id = 'devkit-panel';
-    panel.innerHTML =
-      '<h3>Panneau développeur <span class="devkit-close" id="devkit-close">✕</span></h3>' +
-
-      '<section><h4>Navigation</h4>' +
-        '<div class="devkit-row">' +
-          '<button id="devkit-nav-gestion">Gestion</button>' +
-          '<button id="devkit-nav-consultation">Consultation</button>' +
-          '<button id="devkit-nav-vitrine">Vitrine</button>' +
-        '</div>' +
-        '<div style="color:#6B7280;font-size:10.5px;margin-top:4px">Page actuelle : '+pageHint+'</div>' +
-      '</section>' +
-
-      '<section><h4>Données de test</h4>' +
-        '<button id="devkit-gen-data">➕ Générer clients/devis/factures</button>' +
-        '<button id="devkit-simul-consult">🧪 Simuler client (consultation.html)</button>' +
-      '</section>' +
-
-      '<section><h4>Stockage local</h4>' +
-        '<button id="devkit-view-storage">👁 Voir le JSON brut</button>' +
-        '<button id="devkit-export-storage">⬇ Exporter en fichier .json</button>' +
-        '<button id="devkit-copy-storage">📋 Copier dans le presse-papier</button>' +
-        '<button id="devkit-reset" style="color:#F87171">🗑 Réinitialisation complète</button>' +
-      '</section>' +
-
-      '<section><h4>Formulaires & connexion</h4>' +
-        '<button id="devkit-toggle-valid">☑ Désactiver les validations</button>' +
-        '<button id="devkit-bypass-auth">🔓 Contourner la connexion (local)</button>' +
-      '</section>' +
-
-      '<section><h4>Horloge fictive</h4>' +
-        '<input type="text" id="devkit-date-input" placeholder="AAAA-MM-JJ">' +
-        '<div class="devkit-row">' +
-          '<button id="devkit-set-date">Appliquer</button>' +
-          '<button id="devkit-reset-date">Réel</button>' +
-        '</div>' +
-      '</section>' +
-
-      '<section><h4>Journal (erreurs / avertissements)</h4>' +
-        '<div id="devkit-log"></div>' +
-        '<button id="devkit-clear-log" style="margin-top:6px">Vider le journal</button>' +
-      '</section>' +
-
-      '<section><h4>Sortie</h4>' +
-        '<button id="devkit-off" style="color:#F87171">⏻ Désactiver le mode développeur</button>' +
-      '</section>';
-
-    document.body.appendChild(panel);
-    panelEl = panel;
-
-    // Wiring
-    document.getElementById('devkit-close').onclick = function(){ panel.classList.remove('open'); };
-    document.getElementById('devkit-nav-gestion').onclick = function(){ location.href = files.gestion; };
-    document.getElementById('devkit-nav-consultation').onclick = function(){ location.href = files.consultation; };
-    document.getElementById('devkit-nav-vitrine').onclick = function(){ location.href = files.vitrine; };
-
-    document.getElementById('devkit-gen-data').onclick = function(){ genererDonneesTest(6,10); };
-    document.getElementById('devkit-simul-consult').onclick = simulerConsultation;
-
-    document.getElementById('devkit-view-storage').onclick = voirStorage;
-    document.getElementById('devkit-export-storage').onclick = exporterStorageJSON;
-    document.getElementById('devkit-copy-storage').onclick = copierStoragePressePapier;
-    document.getElementById('devkit-reset').onclick = resetComplet;
-
-    var validBtn = document.getElementById('devkit-toggle-valid');
-    validBtn.onclick = function(){
-      var state = toggleValidations();
-      validBtn.textContent = state ? '☑ Réactiver les validations' : '☑ Désactiver les validations';
-    };
-    document.getElementById('devkit-bypass-auth').onclick = function(){ alert(bypassAuth()); };
-
-    document.getElementById('devkit-set-date').onclick = function(){
-      var v = document.getElementById('devkit-date-input').value.trim();
-      if(!v){ alert('Entrez une date au format AAAA-MM-JJ'); return; }
-      activerHorlogeFictive(v);
-    };
-    document.getElementById('devkit-reset-date').onclick = desactiverHorlogeFictive;
-
-    document.getElementById('devkit-clear-log').onclick = function(){ logs = []; renderLogPanel(); };
-    document.getElementById('devkit-off').onclick = function(){ desactiverModeDev(); };
-
-    renderLogPanel();
-    return panel;
-  }
-
-  function renderLogPanel(){
-    var el = document.getElementById('devkit-log');
-    if(!el) return;
-    el.innerHTML = logs.slice().reverse().map(function(l){
-      return '<div class="'+(l.type==='error'?'err':l.type==='warn'?'warn':'')+'">['+l.time+'] '+esc(l.msg)+'</div>';
-    }).join('') || '<div style="color:#6B7280">Aucune entrée pour le moment.</div>';
-  }
-  function esc(s){ return (s||'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-  // ── Activation / désactivation ──────────────────────────────
-  window.activerModeDev = function(code){
-    if(code !== DEV_CODE){
-      console.log('%cDEVKIT: code incorrect.', 'color:#DC2626');
-      return false;
-    }
-    try{ sessionStorage.setItem(STORAGE_FLAG, '1'); }catch(e){}
-    buildPanel();
-    console.log('%c🛠 Mode développeur activé.', 'color:#16A34A;font-weight:bold');
-    console.log('Fonctions dispo : genererDonneesTest(nbClients,nbDocs), voirStorage(), exporterStorageJSON(), resetComplet(), toggleValidations(), bypassAuth(), simulerConsultation(), simulerEtatDocument(id,{...}), activerHorlogeFictive("AAAA-MM-JJ"), desactiverHorlogeFictive(), desactiverModeDev()');
-    return true;
-  };
-
-  window.desactiverModeDev = function(){
-    try{ sessionStorage.removeItem(STORAGE_FLAG); }catch(e){}
-    var panel = document.getElementById('devkit-panel');
-    var fab = document.getElementById('devkit-fab');
-    var badge = document.getElementById('devkit-badge');
-    if(panel) panel.remove();
-    if(fab) fab.remove();
-    if(badge) badge.remove();
-    panelEl = null;
-    console.log('%cMode développeur désactivé.', 'color:#DC2626');
-  };
-
-  // Expose les fonctions utilitaires pour un usage direct en console
-  window.genererDonneesTest = genererDonneesTest;
-  window.voirStorage = voirStorage;
-  window.exporterStorageJSON = exporterStorageJSON;
-  window.copierStoragePressePapier = copierStoragePressePapier;
-  window.resetComplet = resetComplet;
-  window.toggleValidations = toggleValidations;
-  window.bypassAuth = bypassAuth;
-  window.simulerConsultation = simulerConsultation;
-  window.simulerEtatDocument = simulerEtatDocument;
-  window.activerHorlogeFictive = activerHorlogeFictive;
-  window.desactiverHorlogeFictive = desactiverHorlogeFictive;
-
-  // Réactivation automatique si déjà activé dans cette session (persiste à la navigation)
-  try{
-    if(sessionStorage.getItem(STORAGE_FLAG)==='1'){
-      document.addEventListener('DOMContentLoaded', function(){ buildPanel(); });
-      if(document.readyState==='complete' || document.readyState==='interactive') buildPanel();
-    }
-  }catch(e){}
-
+  },{rootMargin:'-45% 0px -50% 0px'});
+  Object.keys(liens).forEach(function(id){var el=document.getElementById(id);if(el)spy.observe(el);});
+  var top=document.getElementById('toTopBtn');
+  window.addEventListener('scroll',function(){if(top)top.classList.toggle('show',window.scrollY>700);},{passive:true});
 })();
-
 </script>
+
+
 </body>
 </html>
